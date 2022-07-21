@@ -8,17 +8,18 @@ import Collection from '../components/collection'
 import AddButton from '../components/addButton'
 import DatePicker from 'react-datepicker'
 import { useState,useEffect } from 'react'
-import { collectionData } from '../data/data'
 
 
-export default function Home({allData}) {
 
-
-  allData = collectionData
-  useEffect(() => {
-    window.localStorage.setItem("allData",JSON.stringify(allData))
-    console.log("Added data")
-  }, []);
+export default function Home() {  
+  const [collectionData, setCollectionData ] = useState([]);
+  useEffect(()=>{
+    console.log('Inside home useEffect')
+    const items = JSON.parse(window.localStorage.getItem("collections"))
+   if (items) {setCollectionData(items)}
+  },[])
+  
+  console.log(collectionData)
   return (
     <div className='h-full  bg-gray-900 '>
      <Head>
@@ -32,13 +33,13 @@ export default function Home({allData}) {
 <AddButton/>
 
 </div>
-<section className='mb-20'>
+<section className='pb-10'>
 
 <div className='container mx-auto mt-10'>
   {
-    allData.map(
-      (collectionData)=>(
-          <Collection collectionData = {collectionData} key={collectionData.collectionName}/>
+    collectionData.map(
+      (collection)=>(
+          <Collection collectionData = {collection} key={collection._id}/>
       )
   )
   }
