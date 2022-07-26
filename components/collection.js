@@ -14,43 +14,68 @@ import {
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  Lorem,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-  PopoverHeader,
-  PopoverBody,
-  PopoverFooter,
-  PopoverArrow,
-  PopoverCloseButton,
-  PopoverAnchor,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuDivider,
   Button,
   ButtonGroup,
   Portal,
   Textarea,
   useDisclosure,
+  Radio, 
+  RadioGroup,Stack, filter
 } from "@chakra-ui/react";
 import { DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import { useEffect, useState } from "react";
 
+
 export default function Collection({ collectionData }) {
-
-  const [taskData, setTaskData] = useState([]);
-  useEffect(() => {
-    console.log("Inside task useEffect");
-    let items = JSON.parse(window.localStorage.getItem("tasks"));
-    if (items) {
-      items = items.filter((a) => a.collectionId === collectionData._id);
-      setTaskData(items);
-    }
-  }, []);
-
   const { onOpen, onClose, isOpen } = useDisclosure();
   const [startDate, setStartDate] = useState(new Date());
   const [inputText, setInputText] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [sorted, setSorted] = useState(0);
+  const [sorted, setSorted] = useState(1);
+  const [value, setValue] = useState('1')
+  const [taskData, setTaskData] = useState([]);
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    console.log("Inside task useEffect");
+    console.log(sorted)
+    filterItems()
+  }, [sorted,value,count]);
+
+  function filterItems(){
+    console.log("value is",value)
+    let items = JSON.parse(window.localStorage.getItem("tasks"))
+    if(items){
+    if(value==='1'){
+     items= items.filter((a) => a.collectionId === collectionData._id);
+    }
+    if(value==='2'){
+     items= items.filter((a) => a.collectionId === collectionData._id && a.completionDate!==null);
+    }
+    if(value==='3'){
+     items =  items.filter((a) => a.collectionId === collectionData._id && a.completionDate===null);
+    }
+    if(value==='4'){
+      items =  items.filter((a) => (a.collectionId === collectionData._id) && (new Date(a.date)<Date.now()) && (a.completionDate===null));
+     }    
+    if(sorted===1){
+      items.sort((a,b)=>(new Date(a.date)> new Date(b.date))?1 : (new Date(a.date)< new Date(b.date))?-1:0)
+  }
+ 
+      setTaskData(items)
+    }
+ }
+
+ 
   const PER_PAGE = 10;
   const offset = currentPage * PER_PAGE;
 
@@ -66,6 +91,8 @@ export default function Collection({ collectionData }) {
     setInputText(e.target.value);
   };
 
+
+
   const onSubmit = (e) => {
     e.preventDefault();
     if (!inputText) {
@@ -78,43 +105,31 @@ export default function Collection({ collectionData }) {
       items.unshift({
         _id: uuidv4(),
         text: inputText,
-        date: startDate,
+        date: new Date(startDate),
         completionDate: null,
         collectionId: collectionData._id,
-        completed: false
       });
       window.localStorage.setItem("tasks", JSON.stringify(items));
-      items = items.filter((a) => a.collectionId === collectionData._id);
-      if(sorted){
-        items.sort((a,b)=>(new Date(a.date)> new Date(b.date))?1 : (new Date(a.date)< new Date(b.date))?-1:0)
-      }
-      setTaskData(items);
+      filterItems()
       setInputText("");
       setStartDate(new Date());
       onClose();
     }
   };
+
+
+
   const onToggle = (e) => {
-    e.preventDefault();
-   
-    if(sorted){
-      let items = JSON.parse(window.localStorage.getItem("tasks"));
-      if (items) {
-        items = items.filter((a) => a.collectionId === collectionData._id);
-        setTaskData(items);
-      
-        setSorted(0)
-    }
-  }
-     else{
-      let items = taskData
-      items.sort((a,b)=>(new Date(a.date)> new Date(b.date))?1 : (new Date(a.date)< new Date(b.date))?-1:0)
-      setTaskData(items)
-     
-      setSorted(1)
-     }
-     
+    e.preventDefault()
+   if(sorted===1){
+    setSorted(0)
+   }
+   else{
+    setSorted(1)
+   }
+   console.log("sort is ",sorted)     
 }
+
 
   return (
     <>
@@ -123,10 +138,10 @@ export default function Collection({ collectionData }) {
           <div className="text-2xl">{collectionData.name}</div>
           <div className="flex justify-start" >
           <FormControl display='flex' alignItems='center'>
-  <FormLabel htmlFor='email-alerts' mt='1'>
-    Sort By Deadline
+  <FormLabel htmlFor='email-alerts' >
+    Sort By Date
   </FormLabel>
-  <Switch id='sort'  colorScheme= "pink" mr = '4' onChange={onToggle}/>
+  <Switch colorScheme='pink' onChange={onToggle} isChecked={sorted} mr='2'/>
 </FormControl>
           <div className="mr-2 hover:text-pink-500">
             <DeleteIcon />
@@ -151,10 +166,11 @@ export default function Collection({ collectionData }) {
           </div>
 
           {currentPageData.map((task) => (
-            <Task taskData={task} key={task._id} />
+            <Task taskData={task} key={task._id} setCount={setCount} count = {count} />
           ))}
+
         </div>
-        <div className="text-sm sm:text-lg text-white">
+        <div className="text-sm sm:text-lg text-white flex flex-row">
           <Button onClick={onOpen} colorScheme="pink">
             <AddIcon className="mr-2" /> Add Task
           </Button>
@@ -195,6 +211,14 @@ export default function Collection({ collectionData }) {
               </ModalFooter>
             </ModalContent>
           </Modal>
+          <RadioGroup onChange={setValue} value={value} className="ml-5">
+      <Stack direction='row'>
+        <Radio value='1' colorScheme='pink' size='lg'>All Tasks</Radio>
+        <Radio value='2' colorScheme='pink' size='lg'>Completed</Radio>
+        <Radio value='3' colorScheme='pink' size='lg'>Pending</Radio> 
+        <Radio value='4' colorScheme='pink' size='lg'>Overdue</Radio> 
+      </Stack>
+    </RadioGroup>
         </div>
       </div>
     </>
