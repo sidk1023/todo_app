@@ -13,11 +13,13 @@ import { useState,useEffect } from 'react'
 
 export default function Home() {  
   const [collectionData, setCollectionData ] = useState([]);
+  const [count, setCount] = useState(0)
+
   useEffect(()=>{
     console.log('Inside home useEffect')
     const items = JSON.parse(window.localStorage.getItem("collections"))
    if (items) {setCollectionData(items)}
-  },[])
+  },[count])
   
   console.log(collectionData)
   return (
@@ -30,7 +32,7 @@ export default function Home() {
     
     <Navbar> </Navbar>
     <div className='flex justify-center my-4 py-2'>
-<AddButton/>
+<AddButton count = {count} setCount = {setCount}/>
 
 </div>
 <section className='pb-10'>
@@ -39,7 +41,7 @@ export default function Home() {
   {
     collectionData.map(
       (collection)=>(
-          <Collection collectionData = {collection} key={collection._id}/>
+          <Collection collectionData = {collection} key={collection._id} count2 = {count} setCount2 = {setCount}/>
       )
   )
   }

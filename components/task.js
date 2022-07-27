@@ -1,9 +1,17 @@
 import { Checkbox, CheckboxGroup, Tooltip,Badge  } from '@chakra-ui/react'
 import {EditIcon,CalendarIcon,DeleteIcon} from '@chakra-ui/icons'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 
 export default function Task({taskData,setCount,count}){
+    const [time, setTime] = useState(Date.now());
+
+useEffect(() => {
+  const interval = setInterval(() => setTime(Date.now()), 1000);
+  return () => {
+    clearInterval(interval);
+  };
+}, []);
     
     const [completed, setCompleted] = useState(taskData.completionDate?1:0)
 
@@ -51,9 +59,7 @@ export default function Task({taskData,setCount,count}){
   <CalendarIcon />
 </Tooltip>
             </div>
-            <div className='ml-4 hover:text-pink-500'>
-                <EditIcon/>
-            </div>
+           
             <div className='ml-4 hover:text-pink-500' onClick={handleDelete}>
                 <DeleteIcon/>
             </div>

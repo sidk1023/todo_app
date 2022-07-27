@@ -28,15 +28,28 @@ import {
   Textarea,
   useDisclosure,
   Radio, 
-  RadioGroup,Stack, filter
+  RadioGroup,Stack, 
+  filter,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay
 } from "@chakra-ui/react";
 import { DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 
-export default function Collection({ collectionData }) {
+export default function Collection({ collectionData, count2, setCount2}) {
   const { onOpen, onClose, isOpen } = useDisclosure();
+  const { 
+    isOpen: isOpenAlert, 
+    onOpen: onOpenAlert, 
+    onClose: onCloseAlert 
+} = useDisclosure()
+const cancelRef = useRef()
   const [startDate, setStartDate] = useState(new Date());
   const [inputText, setInputText] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
@@ -91,7 +104,7 @@ export default function Collection({ collectionData }) {
     setInputText(e.target.value);
   };
 
-
+   
 
   const onSubmit = (e) => {
     e.preventDefault();
@@ -130,6 +143,18 @@ export default function Collection({ collectionData }) {
    console.log("sort is ",sorted)     
 }
 
+const onDelete = (e)=> {
+  e.preventDefault()
+  let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+        let filteredTasks = tasks.filter((obj=> obj.collectionId !== collectionData._id))
+        let collections = JSON.parse(window.localStorage.getItem('collections'))
+        let filteredCollections = collections.filter((obj=> obj._id !== collectionData._id))
+        window.localStorage.setItem('collections',JSON.stringify(filteredCollections))
+        window.localStorage.setItem('tasks',JSON.stringify(filteredTasks))
+       setCount2(count2+1)
+  onCloseAlert()
+}
+
 
   return (
     <>
@@ -143,10 +168,35 @@ export default function Collection({ collectionData }) {
   </FormLabel>
   <Switch colorScheme='pink' onChange={onToggle} isChecked={sorted} mr='2'/>
 </FormControl>
-          <div className="mr-2 hover:text-pink-500">
+          <div className="mr-2 hover:text-pink-500" onClick = {onOpenAlert}>
             <DeleteIcon />
           </div>
-        
+          <AlertDialog
+        isOpen={isOpenAlert}
+        leastDestructiveRef={cancelRef}
+        onClose={onCloseAlert}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize='lg' fontWeight='bold'>
+              Delete Collection
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onCloseAlert}>
+                Cancel
+              </Button>
+              <Button colorScheme='red' onClick={onDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
             </div>
         </div>
         <div className="App">
