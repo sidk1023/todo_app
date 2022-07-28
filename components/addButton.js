@@ -12,7 +12,10 @@ import {
     Input,
     useDisclosure
   } from '@chakra-ui/react'
-import { useState } from "react";
+  import { getItems,setItems } from '../data/service' 
+   import { useState } from "react";
+
+
 export default function AddButton({count,setCount}){
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [inputText, setInputText] = useState('')
@@ -25,13 +28,13 @@ export default function AddButton({count,setCount}){
         alert("Input should not be blank");
     }else{
       console.log(inputText)
-      let items = JSON.parse(window.localStorage.getItem("collections"));
+      let items = getItems("collections");
       items.unshift({
         name: inputText,
         _id: uuidv4()
         
       })
-      window.localStorage.setItem("collections", JSON.stringify(items));
+      setItems("collections", items);
       setCount(count+1)
       setInputText('')
       onClose()

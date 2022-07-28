@@ -41,6 +41,7 @@ import { DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import { useEffect, useState, useRef } from "react";
 
+import { getItems,setItems } from '../data/service'
 
 export default function Collection({ collectionData, count2, setCount2}) {
   const { onOpen, onClose, isOpen } = useDisclosure();
@@ -66,7 +67,7 @@ const cancelRef = useRef()
 
   function filterItems(){
     console.log("value is",value)
-    let items = JSON.parse(window.localStorage.getItem("tasks"))
+    let items = getItems("tasks")
     if(items){
     if(value==='1'){
      items= items.filter((a) => a.collectionId === collectionData._id);
@@ -114,7 +115,7 @@ const cancelRef = useRef()
       alert("Date Should be after today");
     } else {
       console.log(inputText, startDate);
-      let items = JSON.parse(window.localStorage.getItem("tasks"));
+      let items = getItems("tasks")
       items.unshift({
         _id: uuidv4(),
         text: inputText,
@@ -122,7 +123,7 @@ const cancelRef = useRef()
         completionDate: null,
         collectionId: collectionData._id,
       });
-      window.localStorage.setItem("tasks", JSON.stringify(items));
+      setItems("tasks",items);
       filterItems()
       setInputText("");
       setStartDate(new Date());
@@ -143,14 +144,15 @@ const cancelRef = useRef()
    console.log("sort is ",sorted)     
 }
 
+
 const onDelete = (e)=> {
   e.preventDefault()
-  let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+  let tasks = getItems('tasks')
         let filteredTasks = tasks.filter((obj=> obj.collectionId !== collectionData._id))
-        let collections = JSON.parse(window.localStorage.getItem('collections'))
+        let collections = getItems('collections')
         let filteredCollections = collections.filter((obj=> obj._id !== collectionData._id))
-        window.localStorage.setItem('collections',JSON.stringify(filteredCollections))
-        window.localStorage.setItem('tasks',JSON.stringify(filteredTasks))
+        setItems('collections',filteredCollections)
+        setItems('tasks',filteredTasks)
        setCount2(count2+1)
   onCloseAlert()
 }

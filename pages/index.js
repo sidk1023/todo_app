@@ -8,6 +8,7 @@ import Collection from '../components/collection'
 import AddButton from '../components/addButton'
 import DatePicker from 'react-datepicker'
 import { useState,useEffect } from 'react'
+import { getItems,setItems } from '../data/service'
 
 
 
@@ -17,7 +18,7 @@ export default function Home() {
 
   useEffect(()=>{
     console.log('Inside home useEffect')
-    const items = JSON.parse(window.localStorage.getItem("collections"))
+    const items = getItems("collections")
    if (items) {setCollectionData(items)}
   },[count])
   

@@ -2,6 +2,7 @@ import { Checkbox, CheckboxGroup, Tooltip,Badge  } from '@chakra-ui/react'
 import {EditIcon,CalendarIcon,DeleteIcon} from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
 
+import { getItems,setItems } from '../data/service'
 
 export default function Task({taskData,setCount,count}){
     const [time, setTime] = useState(Date.now());
@@ -16,7 +17,7 @@ useEffect(() => {
     const [completed, setCompleted] = useState(taskData.completionDate?1:0)
 
     const handleCheck = (e) => {
-        let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+        let tasks = getItems('tasks')
         let objIndex = tasks.findIndex((obj=> obj._id === taskData._id))
         if(completed===0){
             tasks[objIndex].completionDate = Date.now()
@@ -28,14 +29,15 @@ useEffect(() => {
             setCompleted(0)
 
         }
-        window.localStorage.setItem('tasks',JSON.stringify(tasks))
+        setItems('tasks',tasks)
+        setCount(count+1)
       };
 
       const handleDelete = (e) =>{
-        let tasks = JSON.parse(window.localStorage.getItem('tasks'))
+        let tasks = getItems('tasks')
         let objIndex = tasks.findIndex((obj=> obj._id === taskData._id))
         tasks.splice(objIndex,1)
-        window.localStorage.setItem('tasks',JSON.stringify(tasks))
+        setItems('tasks',tasks)
         setCount(count+1)
       }
     
