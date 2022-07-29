@@ -1,7 +1,7 @@
 import { Checkbox, CheckboxGroup, Tooltip,Badge  } from '@chakra-ui/react'
 import {EditIcon,CalendarIcon,DeleteIcon} from '@chakra-ui/icons'
 import { useState, useEffect } from 'react'
-
+import { CollectionInterface, TaskInterface} from '../data/interfaces'
 import { getItems,setItems } from '../data/service'
 
 export default function Task({taskData,setCount,count}){
@@ -17,10 +17,10 @@ useEffect(() => {
     const [completed, setCompleted] = useState(taskData.completionDate?1:0)
 
     const handleCheck = (e) => {
-        let tasks = getItems('tasks')
+        let tasks: TaskInterface[] = getItems('tasks')
         let objIndex = tasks.findIndex((obj=> obj._id === taskData._id))
         if(completed===0){
-            tasks[objIndex].completionDate = Date.now()
+            tasks[objIndex].completionDate = new Date(Date.now()) 
 
             setCompleted(1)
         }
@@ -34,7 +34,7 @@ useEffect(() => {
       };
 
       const handleDelete = (e) =>{
-        let tasks = getItems('tasks')
+        let tasks: TaskInterface[] = getItems('tasks')
         let objIndex = tasks.findIndex((obj=> obj._id === taskData._id))
         tasks.splice(objIndex,1)
         setItems('tasks',tasks)
@@ -43,7 +43,7 @@ useEffect(() => {
     
     let badgeText = 'Pending'
     let badgeColor = 'blue'
-    if(new Date(taskData.date)<Date.now()){
+    if(new Date(taskData.date)<new Date(Date.now())){
       badgeText = 'Overdue'
       badgeColor='red'
     }

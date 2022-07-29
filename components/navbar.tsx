@@ -28,7 +28,7 @@ import {
 
 import React from "react";
 
-export default function Navbar() {
+export default function Navbar(props: any) {
   const btnRef = React.useRef();
 
   return (

@@ -1,6 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
 import { AddIcon } from "@chakra-ui/icons";
 import { Button } from "@chakra-ui/react";
+import { CollectionInterface } from "../data/interfaces";
 import {
     Modal,
     ModalOverlay,
@@ -28,7 +29,7 @@ export default function AddButton({count,setCount}){
         alert("Input should not be blank");
     }else{
       console.log(inputText)
-      let items = getItems("collections");
+      let items: CollectionInterface[] = getItems("collections");
       if(items===null){
         items = []
       }
@@ -56,11 +57,12 @@ export default function AddButton({count,setCount}){
       
         />
     </Button>
+    <div  className='text-white bg-black' >
     <Modal 
     isOpen={isOpen} 
     onClose={onClose}
     scrollBehavior={'inside'}
-    className='text-white bg-black'
+   
     >
         <ModalOverlay />
         <ModalContent>
@@ -77,6 +79,7 @@ export default function AddButton({count,setCount}){
           </ModalFooter>
         </ModalContent>
       </Modal>
+      </div>
     </>
     )
 }
