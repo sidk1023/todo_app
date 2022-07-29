@@ -116,6 +116,9 @@ const cancelRef = useRef()
     } else {
       console.log(inputText, startDate);
       let items = getItems("tasks")
+      if(items === null){
+        items = []
+      }
       items.unshift({
         _id: uuidv4(),
         text: inputText,

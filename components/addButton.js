@@ -29,10 +29,12 @@ export default function AddButton({count,setCount}){
     }else{
       console.log(inputText)
       let items = getItems("collections");
+      if(items===null){
+        items = []
+      }
       items.unshift({
         name: inputText,
         _id: uuidv4()
-        
       })
       setItems("collections", items);
       setCount(count+1)
