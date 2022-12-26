@@ -28,7 +28,7 @@ import {
 
 import React from "react";
 
-export default function Navbar() {
+export default function Navbar(props: any) {
   const btnRef = React.useRef();
 
   return (
@@ -36,6 +36,12 @@ export default function Navbar() {
       <div className=" grid grid-cols-2 bg-gray-900 text-gray-200 px-8 h-18 py-3.5 border-b-2  border-b-gray-600">
         <div className=" text-xl sm:text-3xl">
           <CheckIcon /> To Do App
+        </div>
+        <div className="flex justify-end ">
+            <div className="my-auto text-xl">
+              Sign Out
+            </div>
+      
         </div>
       </div>
     </>

@@ -40,7 +40,7 @@ import {
 import { DeleteIcon, AddIcon } from "@chakra-ui/icons";
 import DatePicker from "react-datepicker";
 import { useEffect, useState, useRef } from "react";
-
+import { TaskInterface,CollectionInterface } from "../data/interfaces";
 import { getItems,setItems } from '../data/service'
 
 export default function Collection({ collectionData, count2, setCount2}) {
@@ -54,20 +54,18 @@ const cancelRef = useRef()
   const [startDate, setStartDate] = useState(new Date());
   const [inputText, setInputText] = useState("");
   const [currentPage, setCurrentPage] = useState(0);
-  const [sorted, setSorted] = useState(1);
+  const [sorted, setSorted] = useState(true);
   const [value, setValue] = useState('1')
   const [taskData, setTaskData] = useState([]);
   const [count, setCount] = useState(0)
 
   useEffect(() => {
-    console.log("Inside task useEffect");
-    console.log(sorted)
     filterItems()
   }, [sorted,value,count]);
 
   function filterItems(){
     console.log("value is",value)
-    let items = getItems("tasks")
+    let items: TaskInterface[]= getItems("tasks")
     if(items){
     if(value==='1'){
      items= items.filter((a) => a.collectionId === collectionData._id);
@@ -79,9 +77,9 @@ const cancelRef = useRef()
      items =  items.filter((a) => a.collectionId === collectionData._id && a.completionDate===null);
     }
     if(value==='4'){
-      items =  items.filter((a) => (a.collectionId === collectionData._id) && (new Date(a.date)<Date.now()) && (a.completionDate===null));
+      items =  items.filter((a) => (a.collectionId === collectionData._id) && (new Date(a.date) <new Date(Date.now())) && (a.completionDate===null));
      }    
-    if(sorted===1){
+    if(sorted===true){
       items.sort((a,b)=>(new Date(a.date)> new Date(b.date))?1 : (new Date(a.date)< new Date(b.date))?-1:0)
   }
  
@@ -92,9 +90,7 @@ const cancelRef = useRef()
  
   const PER_PAGE = 10;
   const offset = currentPage * PER_PAGE;
-
   const currentPageData = taskData.slice(offset, offset + PER_PAGE);
-
   const pageCount = Math.ceil(taskData.length / PER_PAGE);
 
   function handlePageClick({ selected: selectedPage }) {
@@ -111,10 +107,9 @@ const cancelRef = useRef()
     e.preventDefault();
     if (!inputText) {
       alert("Input should not be blank");
-    } else if (startDate < Date.now()) {
+    } else if (new Date(startDate) < new Date(Date.now())) {
       alert("Date Should be after today");
     } else {
-      console.log(inputText, startDate);
       let items = getItems("tasks")
       if(items === null){
         items = []
@@ -138,11 +133,11 @@ const cancelRef = useRef()
 
   const onToggle = (e) => {
     e.preventDefault()
-   if(sorted===1){
-    setSorted(0)
+   if(sorted===true){
+    setSorted(false)
    }
    else{
-    setSorted(1)
+    setSorted(true)
    }
    console.log("sort is ",sorted)     
 }
@@ -150,10 +145,10 @@ const cancelRef = useRef()
 
 const onDelete = (e)=> {
   e.preventDefault()
-  let tasks = getItems('tasks')
-        let filteredTasks = tasks.filter((obj=> obj.collectionId !== collectionData._id))
-        let collections = getItems('collections')
-        let filteredCollections = collections.filter((obj=> obj._id !== collectionData._id))
+  let tasks: TaskInterface[] = getItems('tasks')
+        let filteredTasks: TaskInterface[] = tasks.filter((obj=> obj.collectionId !== collectionData._id))
+        let collections: CollectionInterface[] = getItems('collections')
+        let filteredCollections: CollectionInterface[] = collections.filter((obj=> obj._id !== collectionData._id))
         setItems('collections',filteredCollections)
         setItems('tasks',filteredTasks)
        setCount2(count2+1)
@@ -233,7 +228,6 @@ const onDelete = (e)=> {
             isOpen={isOpen}
             onClose={onClose}
             scrollBehavior={"inside"}
-            className="text-white bg-black"
           >
             <ModalOverlay />
             <ModalContent>
