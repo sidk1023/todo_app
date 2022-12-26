@@ -1,3 +1,17 @@
+Features:
+1. Create tasks and collections
+2. Order by date or by new
+3. Filter as per label
+4. Browser local storage as a data store
+5. Mark tasks as completed, automatically mark as overdue
+6. Pagination
+7. Input validation
+
+Website: https://todo-app-two-pink.vercel.app/
+
+<img width="935" alt="image" src="https://user-images.githubusercontent.com/26787783/209540083-3264b9c2-e891-4fac-ba91-4737bd7707d0.png">
+
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
@@ -10,7 +24,7 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:5000](http://localhost:5000) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
 
